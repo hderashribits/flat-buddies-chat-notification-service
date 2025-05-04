@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/hderashribits/flat-buddies-chat-notification-service/internal/chatandnotification"
+	"github.com/hderashribits/flat-buddies-chat-notification-service/internal/constants"
 	"github.com/hderashribits/flat-buddies-chat-notification-service/internal/model"
 	"github.com/hderashribits/flat-buddies-chat-notification-service/internal/notification"
 	ws "github.com/hderashribits/flat-buddies-chat-notification-service/internal/websocket"
@@ -31,12 +33,12 @@ func main() {
 			Content: fmt.Sprintf("Message from %s: %s", msg.SenderID, msg.Content),
 		}
 
-		if err := notification.SendNotification(notif); err != nil {
-			http.Error(w, "failed to send message notification", http.StatusInternalServerError)
+		if err := chatandnotification.SendMessage(notif); err != nil {
+			http.Error(w, "failed to send message chat", http.StatusInternalServerError)
 			return
 		}
 
-		fmt.Fprintln(w, "Message sent and notification triggered!")
+		fmt.Fprintln(w, "Message sent and chat triggered!")
 	})
 
 	// Flatmates Match
@@ -47,7 +49,7 @@ func main() {
 			return
 		}
 		notif.Type = "match"
-		if err := notification.SendNotification(notif); err != nil {
+		if err := chatandnotification.SendMessage(notif); err != nil {
 			http.Error(w, "failed to send match notification", http.StatusInternalServerError)
 			return
 		}
@@ -74,8 +76,8 @@ func main() {
 		fmt.Println("🔌 WebSocket connected:", userID)
 	})
 
-	fmt.Println("🚀 Server running on :8080 (Chat API + Notification Listener)")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	fmt.Printf("🚀 Server running on :%s (Chat API + Notification Listener)", constants.APIPort)
+	if err := http.ListenAndServe(":"+constants.APIPort, nil); err != nil {
 		panic(err)
 	}
 }

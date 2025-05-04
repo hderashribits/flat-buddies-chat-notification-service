@@ -9,7 +9,7 @@ type ChatMessage struct {
 
 type Notification struct {
 	UserID    string `json:"user_id"`
-	Type      string `json:"type"`    // e.g. "message", "match"
+	Type      string `json:"type"`    // "message" or "match"
 	Content   string `json:"content"` // main message
 	Timestamp int64  `json:"timestamp"`
 }

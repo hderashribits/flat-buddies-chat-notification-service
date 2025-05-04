@@ -1,28 +1,35 @@
-package chat
+package chatandnotification
 
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/hderashribits/flat-buddies-chat-notification-service/internal/constants"
 	"github.com/hderashribits/flat-buddies-chat-notification-service/internal/model"
 	"github.com/segmentio/kafka-go"
 )
 
-func SendMessage(msg model.ChatMessage) error {
+func SendMessage(n model.Notification) error {
+	// Set the timestamp here
+	n.Timestamp = time.Now().Unix()
+
+	// Marshal the struct into JSON bytes
+	value, err := json.Marshal(n)
+	if err != nil {
+		return err
+	}
+
 	writer := &kafka.Writer{
-		Addr:     kafka.TCP("localhost:9092"),
+		Addr:     kafka.TCP(constants.KafkaHost),
 		Topic:    constants.KafkaTopic,
 		Balancer: &kafka.LeastBytes{},
 	}
-
 	defer writer.Close()
-
-	messageBytes, _ := json.Marshal(msg)
 
 	return writer.WriteMessages(context.Background(),
 		kafka.Message{
-			Key:   []byte(msg.ReceiverID),
-			Value: messageBytes,
+			Key:   []byte(n.UserID),
+			Value: value,
 		})
 }
