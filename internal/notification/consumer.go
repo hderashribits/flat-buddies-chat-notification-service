@@ -36,7 +36,7 @@ func StartChatListener() {
 		case "match":
 			fmt.Printf("🎉 Match found for %s: %s\n", notification.UserID, notification.Content)
 		default:
-			fmt.Printf("ℹ️ Unknown notification type for %s: %s\n", notification.UserID, notification.Content)
+			fmt.Printf("ℹ️ Notification received from %s: %s\n", notification.UserID, notification.Content)
 		}
 
 		// Forward to WebSocket
