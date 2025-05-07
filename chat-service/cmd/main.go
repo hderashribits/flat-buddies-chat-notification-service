@@ -17,9 +17,9 @@ func main() {
 	http.HandleFunc("/send", handler.SendMessageHandler)
 
 	// Register the /match endpoint
-	http.HandleFunc("/match", handler.HandleMatch)
+	http.HandleFunc("/notification", handler.HandleNotification)
 
-	log.Println("🚀 Chat service running on :8080")
+	log.Println("🚀 Service running on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}

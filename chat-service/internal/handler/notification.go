@@ -9,26 +9,27 @@ import (
 	"chat-service/internal/producer"
 )
 
-func HandleMatch(w http.ResponseWriter, r *http.Request) {
+func HandleNotification(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	var match struct {
+	var notification struct {
 		User1ID string `json:"user1_id"`
 		User2ID string `json:"user2_id"`
+		Content string `json:"content"`
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&match); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&notification); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
 	notificationMessage := models.ChatMessage{
-		SenderID:   match.User1ID,
-		ReceiverID: match.User2ID,
-		Content:    "You are matched with " + match.User1ID,
+		SenderID:   notification.User1ID,
+		ReceiverID: notification.User2ID,
+		Content:    notification.Content,
 		Timestamp:  time.Now().Unix(),
 	}
 
@@ -45,9 +46,9 @@ func HandleMatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]string{
-		"message": "Match notification sent to Kafka",
-		"user1":   match.User1ID,
-		"user2":   match.User2ID,
+		"message": notification.Content,
+		"user1":   notification.User1ID,
+		"user2":   notification.User2ID,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

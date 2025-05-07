@@ -8,9 +8,9 @@ eval $(minikube docker-env)
 cd chat-service
 docker build -t chat-service:latest .
 docker images
+cd ..
 kubectl apply -f chat-deployment.yaml
 kubectl get pods
-cd ..
 ```
 
 ### Notification service deployment on minikube
@@ -20,9 +20,9 @@ eval $(minikube docker-env)
 cd notification-service
 docker build -t notification-service:latest .
 docker images
+cd ..
 kubectl apply -f notification-deployment.yaml
 kubectl get pods
-cd ..
 ```
 
 ### Kafka and Zookeeper deployment on minikube
@@ -62,9 +62,10 @@ kubectl logs notification-service-<pod-id>
 ### Test Chat service - match (Terminal 1 - use curl or clients like POSTMAN)
 
 ```console
-curl -X POST http://127.0.0.1:<port>/match -d '{
+curl -X POST http://127.0.0.1:<port>/notification -d '{
   "user1_id": "user1",
-  "user2_id": "user2"
+  "user2_id": "user2",
+  "content": "You matched with user2"
 }' -H "Content-Type: application/json"
 ```
 <br> Response
