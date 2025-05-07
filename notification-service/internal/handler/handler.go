@@ -14,7 +14,7 @@ func HandleMessage(value []byte) {
 		return
 	}
 
-	var msg models.ChatMessage
+	var msg models.NotificationMessage
 	err := json.Unmarshal(value, &msg)
 	if err != nil {
 		log.Printf("❌ Failed to decode message: %v", err)
