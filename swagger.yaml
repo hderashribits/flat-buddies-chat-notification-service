@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: Chat Service API
+  version: 1.0.0
+  description: API for sending chat messages and notifications through Kafka.
+
+servers:
+  - url: http://127.0.0.1:58085
+
+paths:
+  /send:
+    post:
+      summary: Send a chat message
+      operationId: sendMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessage'
+            example:
+              sender_id: "user1"
+              receiver_id: "user2"
+              content: "Hi there! Is this flat available?"
+      responses:
+        '202':
+          description: Message successfully sent to Kafka
+          content:
+            text/plain:
+              example: "Message sent to Kafka"
+        '400':
+          description: Invalid request
+        '405':
+          description: Method not allowed
+
+  /notification:
+    post:
+      summary: Send a notification after a match
+      operationId: sendNotification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationRequest'
+            example:
+              user1_id: "user1"
+              user2_id: "user2"
+              content: "You matched with flatmate user2!"
+      responses:
+        '202':
+          description: Notification accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationResponse'
+              example:
+                message: "You matched with flatmate user2!"
+                user1: "user1"
+                user2: "user2"
+        '400':
+          description: Invalid request
+        '405':
+          description: Method not allowed
+
+components:
+  schemas:
+    ChatMessage:
+      type: object
+      properties:
+        sender_id:
+          type: string
+        receiver_id:
+          type: string
+        content:
+          type: string
+      required:
+        - sender_id
+        - receiver_id
+        - content
+
+    NotificationRequest:
+      type: object
+      properties:
+        user1_id:
+          type: string
+        user2_id:
+          type: string
+        content:
+          type: string
+      required:
+        - user1_id
+        - user2_id
+        - content
+
+    NotificationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        user1:
+          type: string
+        user2:
+          type: string
